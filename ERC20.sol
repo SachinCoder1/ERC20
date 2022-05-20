@@ -31,4 +31,21 @@ abstract contract Block is ERC20Interface {
          founder = msg.sender;
          balances[founder]  = totalSupply;
     }
+
+
+    // Balance of token owner;
+    function balanceOf(address tokenOwner) public view override returns(uint balance){
+        return balances[tokenOwner];
+    }
+
+
+    function transfer(address to, uint tokens) public override returns (bool success) {
+        require(balances[msg.sender] >= tokens);
+        balances[to] += tokens;
+        balances[msg.sender] -= tokens;
+        emit Transfer(msg.sender, to, tokens);
+        return true;    
+    }
+
+
 }
