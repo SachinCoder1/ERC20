@@ -25,6 +25,7 @@ abstract contract Block is ERC20Interface {
     address public founder; // founder of this token.
 
     mapping(address => uint) public balances;
+    mapping(address=>mapping(address=>uint)) public allowed; // nested mapping
 
     constructor () {
          totalSupply = 100000;
@@ -38,13 +39,21 @@ abstract contract Block is ERC20Interface {
         return balances[tokenOwner];
     }
 
-
+    // transfer the token
     function transfer(address to, uint tokens) public override returns (bool success) {
         require(balances[msg.sender] >= tokens);
         balances[to] += tokens;
         balances[msg.sender] -= tokens;
         emit Transfer(msg.sender, to, tokens);
         return true;    
+    }
+
+    function approve(address spender, uint tokens) public override returns (bool success){
+        require(balances[msg.sender] >= tokens);
+        require(tokens > 0);
+        allowed[msg.sender][spender] = tokens;
+        emit Approval(msg.sender, spender, tokens);
+        return true;
     }
 
 
