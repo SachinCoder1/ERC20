@@ -39,8 +39,8 @@ interface ERC20Interface {
 }
 
 contract Block is ERC20Interface {
-    string public name = "Block"; // This will be the name of token
-    string public symbol = "BLK"; // Just like bitcoin have BTC, ethereum has ETH we are going to give it BLK
+    string public name = "Ropilo"; // This will be the name of token
+    string public symbol = "ROP"; // Just like bitcoin have BTC, ethereum has ETH we are going to give it ROP
     uint256 public decimal = 0; // upto how much decimal places are token is divisible, In ERC it's upto 20 decimal number but for this i am taking 0 because i am not going to divide this ERC token.
 
     uint256 public override totalSupply; // here override is writtern because i am using the same function which is already available in interface.
