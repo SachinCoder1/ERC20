@@ -3,52 +3,87 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 interface ERC20Interface {
-    function totalSupply() external view returns (uint);
-    function balanceOf(address tokenOwner) external view returns (uint balance);
-    function transfer(address to, uint tokens) external returns (bool success);
+    function totalSupply() external view returns (uint256);
 
-    function allowance (address tokenOwner, address spender) external view returns (uint remaining);
-    function approve (address spender, uint tokens) external returns (bool success);
-    function transferFrom(address from, address to, uint tokens) external returns (bool success);
-    
+    function balanceOf(address tokenOwner)
+        external
+        view
+        returns (uint256 balance);
+
+    function transfer(address to, uint256 tokens)
+        external
+        returns (bool success);
+
+    function allowance(address tokenOwner, address spender)
+        external
+        view
+        returns (uint256 remaining);
+
+    function approve(address spender, uint256 tokens)
+        external
+        returns (bool success);
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokens
+    ) external returns (bool success);
+
     // Events
-    event Transfer(address indexed from, address indexed to, uint tokens);
-    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+    event Transfer(address indexed from, address indexed to, uint256 tokens);
+    event Approval(
+        address indexed tokenOwner,
+        address indexed spender,
+        uint256 tokens
+    );
 }
 
-abstract contract Block is ERC20Interface {
+contract Block is ERC20Interface {
     string public name = "Block"; // This will be the name of token
     string public symbol = "BLK"; // Just like bitcoin have BTC, ethereum has ETH we are going to give it BLK
-    uint public decimal = 0;  // upto how much decimal places are token is divisible, In ERC it's upto 20 decimal number but for this i am taking 0 because i am not going to divide this ERC token.
-     
-    uint public override totalSupply; // here override is writtern because i am using the same function which is already available in interface. 
+    uint256 public decimal = 0; // upto how much decimal places are token is divisible, In ERC it's upto 20 decimal number but for this i am taking 0 because i am not going to divide this ERC token.
+
+    uint256 public override totalSupply; // here override is writtern because i am using the same function which is already available in interface.
     address public founder; // founder of this token.
 
-    mapping(address => uint) public balances;
-    mapping(address=>mapping(address=>uint)) public allowed; // nested mapping
+    mapping(address => uint256) public balances;
+    mapping(address => mapping(address => uint256)) public allowed; // nested mapping
 
-    constructor () {
-         totalSupply = 100000;
-         founder = msg.sender;
-         balances[founder]  = totalSupply;
+    constructor() {
+        totalSupply = 100000;
+        founder = msg.sender;
+        balances[founder] = totalSupply;
     }
 
-
     // Balance of token owner;
-    function balanceOf(address tokenOwner) public view override returns(uint balance){
+    function balanceOf(address tokenOwner)
+        public
+        view
+        override
+        returns (uint256 balance)
+    {
         return balances[tokenOwner];
     }
 
     // transfer the token
-    function transfer(address to, uint tokens) public override returns (bool success) {
+    function transfer(address to, uint256 tokens)
+        public
+        override
+        returns (bool success)
+    {
         require(balances[msg.sender] >= tokens);
         balances[to] += tokens;
         balances[msg.sender] -= tokens;
         emit Transfer(msg.sender, to, tokens);
-        return true;    
+        return true;
     }
 
-    function approve(address spender, uint tokens) public override returns (bool success){
+    //    Approve the transaction
+    function approve(address spender, uint256 tokens)
+        public
+        override
+        returns (bool success)
+    {
         require(balances[msg.sender] >= tokens);
         require(tokens > 0);
         allowed[msg.sender][spender] = tokens;
@@ -56,9 +91,26 @@ abstract contract Block is ERC20Interface {
         return true;
     }
 
-    function allowance (address tokenOwner, address spender) public view override returns (uint remaining){
+    //  Owner will allow the transaction
+    function allowance(address tokenOwner, address spender)
+        public
+        view
+        override
+        returns (uint256 remaining)
+    {
         return allowed[tokenOwner][spender];
     }
 
-
+    // tranfer tokens
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokens
+    ) public override returns (bool success) {
+        require(allowed[from][to] >= tokens);
+        require(balances[from] >= tokens);
+        balances[from] -= tokens;
+        balances[to] += tokens;
+        return true;
+    }
 }
