@@ -2,6 +2,7 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+// interface of our erc20 project.
 interface ERC20Interface {
     function totalSupply() external view returns (uint256);
 
@@ -43,17 +44,22 @@ contract Block is ERC20Interface {
     string public symbol = "ROP"; // Just like bitcoin have BTC, ethereum has ETH we are going to give it ROP
     uint256 public decimal = 0; // upto how much decimal places are token is divisible, In ERC it's upto 20 decimal number but for this i am taking 0 because i am not going to divide this ERC token.
 
-    uint256 public override totalSupply; // here override is writtern because i am using the same function which is already available in interface.
+    uint256 public override totalSupply; // the total tokens which are available.
     address public founder; // founder of this token.
 
     mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) public allowed; // nested mapping
 
     constructor() {
+        // Here i am adding the total of 100000 tokens in totalSupply.
         totalSupply = 100000;
+
+        // The owner who is deploying the contract.
         founder = msg.sender;
         balances[founder] = totalSupply;
     }
+
+    // here override is writtern because i am using the same function which is available in interface.
 
     // Balance of token owner;
     function balanceOf(address tokenOwner)
