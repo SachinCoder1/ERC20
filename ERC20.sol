@@ -56,5 +56,9 @@ abstract contract Block is ERC20Interface {
         return true;
     }
 
+    function allowance (address tokenOwner, address spender) public view override returns (uint remaining){
+        return allowed[tokenOwner][spender];
+    }
+
 
 }
