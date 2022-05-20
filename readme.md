@@ -13,7 +13,7 @@
 
 **balanceOf** function is used to see how much token is there. ( Total token available of perticular user ).
 
-**transfer** function have two arguments in which one is to which address we have to send the token and another parameter is how much token to send.
+**transfer** function have two arguments of the address we have to send the token and another argument is how much token to send.
 
 **transferFrom** function have three arguments in which one is to from which address we have to send the token and another parameter to which address to send and another is how much token to send
 
