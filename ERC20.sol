@@ -212,5 +212,14 @@ contract ICO is Ropilo {
     }
 
 
-    
+    // Burn the remaining tokens after the ico is complete;
+    function burn() public returns (bool){
+        icoState = getState();
+        require(icoState == State.afterEnd);
+        balances[founder] = 0;
+        return true;
+    }
+
+
+
 }
