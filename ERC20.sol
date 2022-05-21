@@ -75,6 +75,7 @@ contract Ropilo is ERC20Interface {
     // transfer the token
     function transfer(address to, uint256 tokens)
         public
+        virtual
         override
         returns (bool success)
     {
@@ -113,7 +114,7 @@ contract Ropilo is ERC20Interface {
         address from,
         address to,
         uint256 tokens
-    ) public override returns (bool success) {
+    ) public override virtual returns (bool success) {
         require(allowed[from][to] >= tokens);
         require(balances[from] >= tokens);
         balances[from] -= tokens;
@@ -192,16 +193,15 @@ contract ICO is Ropilo {
         }
     }
 
-
     // invest
-    function invest() payable public returns(bool){
+    function invest() public payable returns (bool) {
         icoState = getState();
         require(icoState == State.running);
-        require(msg.value >= minInvest && msg.value <= maxInvest );
+        require(msg.value >= minInvest && msg.value <= maxInvest);
         require(raisedAmount <= cap);
 
         raisedAmount += msg.value;
-        uint tokens = msg.value/tokenPrice;
+        uint256 tokens = msg.value / tokenPrice;
         balances[msg.sender] += tokens;
         balances[founder] -= tokens;
         deposit.transfer(msg.value);
@@ -211,13 +211,33 @@ contract ICO is Ropilo {
         return true;
     }
 
-
     // Burn the remaining tokens after the ico is complete;
-    function burn() public returns (bool){
+    function burn() public returns (bool) {
         icoState = getState();
         require(icoState == State.afterEnd);
         balances[founder] = 0;
         return true;
+    }
+
+
+    // Transfer the tokens
+    function transfer(address to, uint256 tokens)
+        public
+        override
+        returns (bool success)
+    {
+        require(block.timestamp > tokenTradeTime);
+        super.transfer(to, tokens);
+        return true;
+    }
+
+
+
+    // Transfer from
+    function transferFrom(address from, address to, uint tokens) public override returns(bool){
+        require(block.timestamp > tokenTradeTime);
+        super.transferFrom(from, to, tokens);
+        return true; 
     }
 
 
