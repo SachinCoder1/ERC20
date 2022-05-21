@@ -1,27 +1,38 @@
 # ERC20 in Solidity. 
 
-## How To Test this ERC?
+## How To Test this Project?
 
 1. Clone the repo in your remix IDE.
 2. Compile it with ctrl+s
 3. Then deploy it in the deploy section of remix IDE.
-4. Now you will be able to see all the buttons and functions of this contract. Details of some button is here 👇👇
+4. Now you will be able to see all the buttons and functions of this contract. 
 
 
 
-## What the code is doing 🔽🔽
+## What features are added?  🔽🔽
 
-**balanceOf** function is used to see how much token is there. ( Total token available of perticular user ).
+Name of the coin is Ropilo and short name is ROP. 
+I have built coin and added the ICO ( Initial Coin offering ) to it. 
 
-**transfer** function have two arguments of the address we have to send the token and another argument is how much token to send.
+## Learnt things 
 
-**transferFrom** function have three arguments in which one is to from which address we have to send the token and another parameter to which address to send and another is how much token to send
+1. Fallback function
+2. virtual keyword
+3. using inheritance in solidity
+4. How to transfer the tokens. 
+5. How to transfer the ethers and receive the ethers.
+6. How to make it more secure.
+7. Best practices of solidity.
+8. Enums
+9. Building coin from scratch.
 
-**totalSupply** variable is used to see the total tokens available. ( Only owner can see it ).
 
-**Symbol** variable is for the symbol of my erc just like the bitcoin have BTC we have **ROP**
+## What i used to make this project:-
 
-**approval** function takes two arguments of spender and token, It allows the transaction to initiate.
+Solidity
+Ethereum
+Remix IDE
+
 
 
 
