@@ -178,6 +178,18 @@ contract ICO is Ropilo {
        deposit  = newDeposit;
    }
 
-   
+   function getState() public view returns (State) {
+       if(icoState == State.halted) {
+           return State.halted;
+       }else if(block.timestamp < icoStart){
+           return State.beforeStart;
+       }else if(block.timestamp >= icoStart && block.timestamp <= icoEnd){
+           return State.running;
+       }else {
+           return State.afterEnd;
+       }
+   }
+
+
 
 }
