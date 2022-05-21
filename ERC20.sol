@@ -233,7 +233,7 @@ contract ICO is Ropilo {
 
 
 
-    // Transfer from
+    // Transfer From
     function transferFrom(address from, address to, uint tokens) public override returns(bool){
         require(block.timestamp > tokenTradeTime);
         super.transferFrom(from, to, tokens);
@@ -241,5 +241,8 @@ contract ICO is Ropilo {
     }
 
 
-
+    // recieve function is always external and payable. This is used when the investor directly sends the money to the address. If we don't use this then the ethers will get lost.
+    receive() external payable {
+        invest();
+    }
 }
