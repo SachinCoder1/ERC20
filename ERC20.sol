@@ -157,6 +157,27 @@ contract ICO is Ropilo {
         icoState = State.beforeStart;
     }
 
+
     // Modifier for only manager can call specific function;
+      modifier onlyManager(){
+          require(msg.sender == manager);
+          _;
+      }
+
+
+   function halt() public onlyManager {
+       icoState = State.halted;   
+   }
+
+   function resume() public onlyManager {
+       icoState = State.running;   
+   }
+   
+   // for safety meausures in case of emergency.
+   function changeDepositAddress(address payable newDeposit) public onlyManager {
+       deposit  = newDeposit;
+   }
+
+   
 
 }
