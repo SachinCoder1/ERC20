@@ -39,8 +39,6 @@ interface ERC20Interface {
     );
 }
 
-
-
 //   contract
 contract Ropilo is ERC20Interface {
     string public name = "Ropilo"; // This will be the name of token
@@ -114,7 +112,7 @@ contract Ropilo is ERC20Interface {
     function transferFrom(
         address from,
         address to,
-        uint256 tokens 
+        uint256 tokens
     ) public override returns (bool success) {
         require(allowed[from][to] >= tokens);
         require(balances[from] >= tokens);
@@ -124,72 +122,95 @@ contract Ropilo is ERC20Interface {
     }
 }
 
-
-
-
 // ICO ( Initial Coin Offering )
 
 contract ICO is Ropilo {
     address public manager;
     address payable public deposit; // This is the address where our investers deposit their ethers.
 
-    uint tokenPrice = 0.1 ether; // Cost of 1 token.
-    uint public cap = 300 ether;  // how much of token we want in circulation. 
-    uint public raisedAmount; // this will check how much ethers are recieved.
+    uint256 tokenPrice = 0.1 ether; // Cost of 1 token.
+    uint256 public cap = 300 ether; // how much of token we want in circulation.
+    uint256 public raisedAmount; // this will check how much ethers are recieved.
 
-    uint public icoStart = block.timestamp; // whenever we will deploy this contract the ico will start;
-    uint public icoEnd = block.timestamp+3600; // the ICO will end after 1 hour of deploying.
+    uint256 public icoStart = block.timestamp; // whenever we will deploy this contract the ico will start;
+    uint256 public icoEnd = block.timestamp + 3600; // the ICO will end after 1 hour of deploying.
 
-    uint public tokenTradeTime = icoEnd + 3600 ;
+    uint256 public tokenTradeTime = icoEnd + 3600;
 
-    uint public maxInvest = 10 ether; // maximum amount to invest
-    uint public minInvest = 0.1 ether; // minimum amount to invest
+    uint256 public maxInvest = 10 ether; // maximum amount to invest
+    uint256 public minInvest = 0.1 ether; // minimum amount to invest
 
-    enum State{beforeStart, afterEnd, running, halted}
+    enum State {
+        beforeStart,
+        afterEnd,
+        running,
+        halted
+    }
 
     State public icoState;
 
-    event Invest(address investor, uint value, uint tokens);
+    event Invest(address investor, uint256 value, uint256 tokens);
 
-    constructor(address payable _deposit){
+    constructor(address payable _deposit) {
         deposit = _deposit;
         manager = msg.sender;
         icoState = State.beforeStart;
     }
 
-
     // Modifier for only manager can call specific function;
-      modifier onlyManager(){
-          require(msg.sender == manager);
-          _;
-      }
+    modifier onlyManager() {
+        require(msg.sender == manager);
+        _;
+    }
+
+    function halt() public onlyManager {
+        icoState = State.halted;
+    }
+
+    function resume() public onlyManager {
+        icoState = State.running;
+    }
+
+    // for safety meausures in case of emergency.
+    function changeDepositAddress(address payable newDeposit)
+        public
+        onlyManager
+    {
+        deposit = newDeposit;
+    }
+
+    //    get the state of enum State;
+    function getState() public view returns (State) {
+        if (icoState == State.halted) {
+            return State.halted;
+        } else if (block.timestamp < icoStart) {
+            return State.beforeStart;
+        } else if (block.timestamp >= icoStart && block.timestamp <= icoEnd) {
+            return State.running;
+        } else {
+            return State.afterEnd;
+        }
+    }
 
 
-   function halt() public onlyManager {
-       icoState = State.halted;   
-   }
+    // invest
+    function invest() payable public returns(bool){
+        icoState = getState();
+        require(icoState == State.running);
+        require(msg.value >= minInvest && msg.value <= maxInvest );
+        require(raisedAmount <= cap);
 
-   function resume() public onlyManager {
-       icoState = State.running;   
-   }
-   
-   // for safety meausures in case of emergency.
-   function changeDepositAddress(address payable newDeposit) public onlyManager {
-       deposit  = newDeposit;
-   }
+        raisedAmount += msg.value;
+        uint tokens = msg.value/tokenPrice;
+        balances[msg.sender] += tokens;
+        balances[founder] -= tokens;
+        deposit.transfer(msg.value);
 
-   function getState() public view returns (State) {
-       if(icoState == State.halted) {
-           return State.halted;
-       }else if(block.timestamp < icoStart){
-           return State.beforeStart;
-       }else if(block.timestamp >= icoStart && block.timestamp <= icoEnd){
-           return State.running;
-       }else {
-           return State.afterEnd;
-       }
-   }
+        emit Invest(msg.sender, msg.value, tokens);
+
+        return true;
+    }
 
 
-
+    
 }
