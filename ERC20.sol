@@ -123,3 +123,40 @@ contract Ropilo is ERC20Interface {
         return true;
     }
 }
+
+
+
+
+// ICO ( Initial Coin Offering )
+
+contract ICO is Ropilo {
+    address public manager;
+    address payable public deposit; // This is the address where our investers deposit their ethers.
+
+    uint tokenPrice = 0.1 ether; // Cost of 1 token.
+    uint public cap = 300 ether;  // how much of token we want in circulation. 
+    uint public raisedAmount; // this will check how much ethers are recieved.
+
+    uint public icoStart = block.timestamp; // whenever we will deploy this contract the ico will start;
+    uint public icoEnd = block.timestamp+3600; // the ICO will end after 1 hour of deploying.
+
+    uint public tokenTradeTime = icoEnd + 3600 ;
+
+    uint public maxInvest = 10 ether; // maximum amount to invest
+    uint public minInvest = 0.1 ether; // minimum amount to invest
+
+    enum State{beforeStart, afterEnd, running, halted}
+
+    State public icoState;
+
+    event Invest(address investor, uint value, uint tokens);
+
+    constructor(address payable _deposit){
+        deposit = _deposit;
+        manager = msg.sender;
+        icoState = State.beforeStart;
+    }
+
+    // Modifier for only manager can call specific function;
+
+}
